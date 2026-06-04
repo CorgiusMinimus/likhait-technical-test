@@ -22,6 +22,8 @@ export function useExpenseForm({ initialData, onSubmit }: UseExpenseFormProps) {
   const [errors, setErrors] = useState<Partial<ExpenseFormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const today = formatDate(new Date)
+
   const handleChange = (field: keyof ExpenseFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error for this field when user starts typing
@@ -47,6 +49,10 @@ export function useExpenseForm({ initialData, onSubmit }: UseExpenseFormProps) {
 
     if (!formData.date) {
       newErrors.date = "Date is required";
+    }
+
+    if (new Date(formData.date) > new Date()) {
+      newErrors.date = "Date cannot be in the future";
     }
 
     setErrors(newErrors);
@@ -87,7 +93,6 @@ export function useExpenseForm({ initialData, onSubmit }: UseExpenseFormProps) {
     });
     setErrors({});
   };
-
   return {
     formData,
     errors,
@@ -95,5 +100,6 @@ export function useExpenseForm({ initialData, onSubmit }: UseExpenseFormProps) {
     handleChange,
     handleSubmit,
     resetForm,
+    today: today,
   };
 }
